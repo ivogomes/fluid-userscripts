@@ -1,0 +1,37 @@
+/**
+ * A userscript for Fluid. This script updates the dock badge for a Gmail SSB
+ * to the number of unread messages in the Inbox.
+ *
+ * This only works for Gmail in English language. For other languages, just replace the name "Inbox"
+ * 
+ * NOTE: For best results, make sure the User Agent is set to a Safari agent.
+ */
+
+initialize();
+
+function initialize() {
+    window.fluid.dockBadge = '';
+    setInterval(updateDockBadge, 1000);
+}
+
+function getUnreadBadge() {
+    var regex = /\s*Inbox\s*\((\d+)\)[^\d]*/;
+
+    var inboxLink = document.querySelectorAll('[role=navigation] a');
+    if (!inboxLink.length) {
+        return '';
+    }
+    
+    var matches = inboxLink[0].innerText.match(regex);
+
+    if (!matches || matches.length < 2) {
+        return '';
+    }
+    
+    return matches[1];
+}
+
+
+function updateDockBadge() {
+    window.fluid.dockBadge = getUnreadBadge();
+}
